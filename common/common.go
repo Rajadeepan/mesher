@@ -35,4 +35,8 @@ const HTTPProtocol = "http"
 const (
 	ChainConsumerOutgoing = "outgoing"
 	ChainProviderIncoming = "incoming"
+	ChainConsumerEgress   = "egress"
 )
+
+//ConsumerEgress constant for egress
+const ConsumerEgress = "ConsumerEgress"

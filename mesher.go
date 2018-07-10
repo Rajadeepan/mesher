@@ -9,11 +9,13 @@ import (
 	"github.com/go-chassis/mesher/bootstrap"
 	"github.com/go-chassis/mesher/cmd"
 	"github.com/go-chassis/mesher/config"
+	_ "github.com/go-chassis/mesher/egress/cse"
 	_ "github.com/go-chassis/mesher/handler"
 	_ "github.com/go-chassis/mesher/protocol/dubbo/client/chassis"
 	_ "github.com/go-chassis/mesher/protocol/dubbo/server"
 	_ "github.com/go-chassis/mesher/protocol/dubbo/simpleRegistry"
 	_ "github.com/go-chassis/mesher/protocol/http"
+
 	"net/http"
 	_ "net/http/pprof"
 )

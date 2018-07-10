@@ -17,6 +17,7 @@ import (
 	chassisHandler "github.com/ServiceComb/go-chassis/core/handler"
 	"github.com/ServiceComb/go-chassis/core/lager"
 	"github.com/ServiceComb/go-chassis/core/metadata"
+	"github.com/go-chassis/mesher/egress"
 )
 
 // Start initialize configs and components
@@ -41,6 +42,10 @@ func Start() error {
 		lager.Logger.Warnf("local service ports is missing, service can not be called by mesher")
 	} else {
 		lager.Logger.Infof("local service ports is [%v]", cmd.Configs.PortsMap)
+	}
+	err := egress.Init()
+	if err != nil {
+		return err
 	}
 
 	return nil

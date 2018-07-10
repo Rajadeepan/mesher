@@ -18,9 +18,12 @@ import (
 	"github.com/ServiceComb/go-chassis/core/util/string"
 	"github.com/ServiceComb/go-chassis/third_party/forked/afex/hystrix-go/hystrix"
 	"github.com/go-chassis/mesher/common"
+	"github.com/go-chassis/mesher/egress"
 	"github.com/go-chassis/mesher/metrics"
 	"github.com/go-chassis/mesher/protocol"
 	"github.com/go-chassis/mesher/resolver"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -81,11 +84,45 @@ func LocalRequestHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c, err := handler.GetChain(chassisCommon.Consumer, common.ChainConsumerOutgoing)
-	if err != nil {
-		handleErrorResponse(inv, w, http.StatusBadGateway, err)
-		lager.Logger.Error("Get chain failed", err)
-		return
+	var c *handler.Chain
+	ok, egressRule := egress.Match(inv.MicroServiceName)
+
+	if ok {
+		var intport int32 = 80
+		for _, port := range egressRule.Ports {
+			if strings.EqualFold(port.Protocol, common.HTTPProtocol) {
+				intport = port.Port
+				break
+			}
+		}
+		inv.Endpoint = inv.MicroServiceName + ":" + strconv.Itoa(int(intport))
+		egresschain := strings.Join([]string{
+			handler.Router,
+			handler.RatelimiterConsumer,
+			handler.BizkeeperConsumer,
+			handler.Transport,
+		}, ",")
+
+		egressChainMap := map[string]string{
+			common.ChainConsumerEgress: egresschain,
+		}
+
+		err = handler.CreateChains(common.ConsumerEgress, egressChainMap)
+		c, err = handler.GetChain(common.ConsumerEgress, common.ChainConsumerEgress)
+
+		if err != nil {
+			handleErrorResponse(inv, w, http.StatusBadGateway, err)
+			lager.Logger.Error("Get chain failed", err)
+			return
+		}
+
+	} else {
+		c, err = handler.GetChain(chassisCommon.Consumer, common.ChainConsumerOutgoing)
+		if err != nil {
+			handleErrorResponse(inv, w, http.StatusBadGateway, err)
+			lager.Logger.Error("Get chain failed", err)
+			return
+		}
 	}
 	defer func(begin time.Time) {
 		timeTaken := time.Since(begin).Seconds()
