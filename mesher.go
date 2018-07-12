@@ -9,7 +9,7 @@ import (
 	"github.com/go-chassis/mesher/bootstrap"
 	"github.com/go-chassis/mesher/cmd"
 	"github.com/go-chassis/mesher/config"
-	_ "github.com/go-chassis/mesher/egress/cse"
+	_ "github.com/go-chassis/mesher/egress/chassis"
 	_ "github.com/go-chassis/mesher/handler"
 	_ "github.com/go-chassis/mesher/protocol/dubbo/client/chassis"
 	_ "github.com/go-chassis/mesher/protocol/dubbo/server"
