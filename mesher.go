@@ -3,7 +3,7 @@ package main
 import (
 	_ "net/http/pprof"
 
-	_ "github.com/go-chassis/mesher/egress/cse"
+	_ "github.com/go-chassis/mesher/egress/chassis"
 	_ "github.com/go-chassis/mesher/handler"
 	_ "github.com/go-chassis/mesher/protocol/dubbo/client/chassis"
 	_ "github.com/go-chassis/mesher/protocol/dubbo/server"
