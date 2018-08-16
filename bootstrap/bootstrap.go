@@ -21,18 +21,19 @@ import (
 	"log"
 	"strings"
 
+	"github.com/go-chassis/go-chassis"
+	chassisHandler "github.com/go-chassis/go-chassis/core/handler"
+	"github.com/go-chassis/go-chassis/core/lager"
+	"github.com/go-chassis/go-chassis/core/metadata"
 	"github.com/go-chassis/mesher/adminapi"
 	"github.com/go-chassis/mesher/adminapi/version"
 	"github.com/go-chassis/mesher/cmd"
 	"github.com/go-chassis/mesher/common"
 	"github.com/go-chassis/mesher/config"
+	"github.com/go-chassis/mesher/egress"
+	_ "github.com/go-chassis/mesher/egress/pilot"
 	"github.com/go-chassis/mesher/register"
 	"github.com/go-chassis/mesher/resolver"
-	"github.com/ServiceComb/go-chassis"
-	chassisHandler "github.com/ServiceComb/go-chassis/core/handler"
-	"github.com/ServiceComb/go-chassis/core/lager"
-	"github.com/ServiceComb/go-chassis/core/metadata"
-	"github.com/go-chassis/mesher/egress"
 )
 
 // Start initialize configs and components

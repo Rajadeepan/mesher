@@ -21,10 +21,10 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/ServiceComb/go-archaius/core"
-	"github.com/ServiceComb/go-archaius/core/config-manager"
-	"github.com/ServiceComb/go-archaius/core/event-system"
-	"github.com/ServiceComb/go-chassis/core/lager"
+	"github.com/go-chassis/go-archaius/core"
+	"github.com/go-chassis/go-archaius/core/config-manager"
+	"github.com/go-chassis/go-archaius/core/event-system"
+	"github.com/go-chassis/go-chassis/core/lager"
 	"github.com/go-chassis/mesher/config/model"
 	"github.com/go-chassis/mesher/egress"
 )

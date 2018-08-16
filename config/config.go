@@ -72,7 +72,7 @@ func SetEgressConfig(nc *egressmodel.EgressConfig) {
 
 //GetConfigFilePath returns config file path
 func GetConfigFilePath(key string) (string, error) {
-	if cmd.Configs.ConfigFile == "" {
+	if cmd.Configs.ConfigFile == "" || key == EgressConfFile {
 		wd, err := fileutil.GetWorkDir()
 		if err != nil {
 			return "", err
@@ -111,11 +111,9 @@ func Init() error {
 	if err != nil {
 		return err
 	}
-
 	if err := yaml.Unmarshal([]byte(egressContents), egressConfig); err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -150,4 +148,9 @@ func SetKeyValueByFile(key, f string) string {
 	contents = string(b)
 	archaius.AddKeyValue(key, contents)
 	return contents
+}
+
+// GetEgressEndpoints returns the pilot address
+func GetEgressEndpoints() string {
+	return egressConfig.Egress.Address
 }

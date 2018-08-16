@@ -19,6 +19,7 @@ package egress
 
 import (
 	"errors"
+	"github.com/go-chassis/go-chassis/control"
 	"github.com/go-chassis/mesher/config/model"
 	"regexp"
 	"sync"
@@ -31,7 +32,7 @@ var regexHosts = make(map[string]*model.EgressRule)
 
 //Egress return egress rule, you can also set custom egress rule
 type Egress interface {
-	Init() error
+	Init(Options) error
 	SetEgressRule(map[string][]*model.EgressRule)
 	FetchEgressRule() map[string][]*model.EgressRule
 	FetchEgressRuleByName(string) []*model.EgressRule
@@ -64,28 +65,26 @@ func BuildEgress(name string) error {
 }
 
 //Match Check Egress rule matches
-func Match(hostname string) (bool, *model.EgressRule) {
-	EgressRules := DefaultEgress.FetchEgressRule()
-	for _, egressRules := range EgressRules {
-		for _, egress := range egressRules {
-			for _, host := range egress.Hosts {
-				// Check host length greater than 0 and does not
-				// start with *
-				if len(host) > 0 && string(host[0]) != "*" {
-					if host == hostname {
-						return true, egress
-					}
-				} else if string(host[0]) == "*" {
-					substring := host[1:]
-					match, _ := regexp.MatchString(substring+"$", hostname)
-					if match == true {
-						return true, egress
-					}
+func Match(hostname string) (bool, *control.EgressConfig) {
+	EgressRules := control.DefaultPanel.GetEgressRule()
+	for _, egress := range EgressRules {
+
+		for _, host := range egress.Hosts {
+			// Check host length greater than 0 and does not
+			// start with *
+			if len(host) > 0 && string(host[0]) != "*" {
+				if host == hostname {
+					return true, &egress
+				}
+			} else if string(host[0]) == "*" {
+				substring := host[1:]
+				match, _ := regexp.MatchString(substring+"$", hostname)
+				if match == true {
+					return true, &egress
 				}
 			}
 		}
 	}
-
 	return false, nil
 }
 
