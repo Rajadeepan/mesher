@@ -22,6 +22,7 @@ import (
 	"github.com/go-chassis/mesher/config/model"
 	"regexp"
 	"sync"
+	"fmt"
 )
 
 var lock sync.RWMutex
@@ -31,7 +32,7 @@ var regexHosts = make(map[string]*model.EgressRule)
 
 //Egress return egress rule, you can also set custom egress rule
 type Egress interface {
-	Init() error
+	Init(Options) error
 	SetEgressRule(map[string][]*model.EgressRule)
 	FetchEgressRule() map[string][]*model.EgressRule
 	FetchEgressRuleByName(string) []*model.EgressRule
@@ -51,6 +52,8 @@ func InstallEgressService(name string, f func() (Egress, error)) {
 
 //BuildEgress create a Egress
 func BuildEgress(name string) error {
+	fmt.Println("Rajadeepan the name is ", name)
+	fmt.Println("Raj: EgressServices si %v", egressServices)
 	f, ok := egressServices[name]
 	if !ok {
 		return ErrNoExist

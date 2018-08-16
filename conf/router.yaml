@@ -10,3 +10,7 @@
 #          version: 1.2
 #          app: HelloWorld
 #        weight: 20     #weight of 20%
+
+router:
+  infra: pilot # pilot or cse
+  address: http://istio-pilot.istio-system:15010

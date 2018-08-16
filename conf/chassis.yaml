@@ -4,12 +4,17 @@ cse:
     http:
       listenAddress: 127.0.0.1:30101
   service:
-    registry:
+#    Registry:
+#      registrator:
+#        disable: true
+#      serviceDiscovery:
+#        type: pilot
+#        address: http://istio-pilot.istio-system:8080
       address: http://127.0.0.1:30100 # uri of service center
-      #address: https://cse.cn-north-1.myhuaweicloud.com:443 # uri of service center
-      scope: full #set full to be able to discover other app's service
-      watch: false # set if you want to watch instance change event
-      autoIPIndex: true # set to true if u want to resolve source IP to microservice
+#      #address: https://cse.cn-north-1.myhuaweicloud.com:443 # uri of service center
+#      scope: full #set full to be able to discover other app's service
+#      watch: false # set if you want to watch instance change event
+#      autoIPIndex: true # set to true if u want to resolve source IP to microservice
 #  config:
 #    client:
 #      serverUri: https://cse.cn-north-1.myhuaweicloud.com:443 #uri of config center

@@ -18,6 +18,8 @@ import (
 	"github.com/ServiceComb/go-chassis/core/lager"
 	"github.com/ServiceComb/go-chassis/core/metadata"
 	"github.com/go-chassis/mesher/egress"
+	_ "github.com/go-chassis/mesher/egress/pilot"
+
 )
 
 // Start initialize configs and components

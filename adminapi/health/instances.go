@@ -7,7 +7,7 @@ import (
 	ver "github.com/go-chassis/mesher/adminapi/version"
 
 	metricsink "github.com/ServiceComb/cse-collector"
-	"github.com/ServiceComb/go-cc-client/member-discovery"
+	"github.com/ServiceComb/go-cc-client/configcenter-client"
 	"github.com/ServiceComb/go-chassis/core/config"
 	"github.com/ServiceComb/go-chassis/core/lager"
 	"github.com/ServiceComb/go-chassis/core/registry"
@@ -68,12 +68,12 @@ func getServiceStatus() (serviceName, version string, err error) {
 }
 
 func isConfigCenterConnected() bool {
-	if memberdiscovery.MemberDiscoveryService == nil {
+	if configcenterclient.MemberDiscoveryService == nil {
 		return false
 	}
 
 	// Getting config center ip's using refresh members handled in GetConfigServer function based on Autodiscovery
-	configServerHosts, err := memberdiscovery.MemberDiscoveryService.GetConfigServer()
+	configServerHosts, err := configcenterclient.MemberDiscoveryService.GetConfigServer()
 	if err != nil || len(configServerHosts) == 0 {
 		return false
 	}

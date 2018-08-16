@@ -27,6 +27,7 @@ import (
 	"github.com/ServiceComb/go-chassis/core/lager"
 	"github.com/go-chassis/mesher/config/model"
 	"github.com/go-chassis/mesher/egress"
+	"fmt"
 )
 
 const egressFileSourceName = "EgressFileSource"
@@ -89,9 +90,12 @@ func newEgressFileSource() *egressFileSource {
 }
 
 func (r *egressFileSource) GetSourceName() string {
+	lager.Logger.Infof("Raj: Inside GetSourceName")
 	return egressFileSourceName
 }
 func (r *egressFileSource) GetConfigurations() (map[string]interface{}, error) {
+	fmt.Println("Raj: value of r %v", r)
+	fmt.Println("Raj: value of r.d %v", r.d)
 	configMap := make(map[string]interface{})
 	for k, v := range r.d {
 		configMap[k] = v

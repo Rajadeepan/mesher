@@ -19,7 +19,14 @@ package model
 
 //EgressConfig is the struct having info about egress rule destinations
 type EgressConfig struct {
+	Egress          Egress                `yaml:"egress"`
 	Destinations map[string][]*EgressRule `yaml:"egressRule"`
+}
+
+// Egress define where rule comes from
+type Egress struct {
+	Infra   string `yaml:"infra"`
+	Address string `yaml:"address"`
 }
 
 //EgressRule has hosts and ports information

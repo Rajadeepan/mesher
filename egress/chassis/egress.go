@@ -44,7 +44,8 @@ func (r *Egress) FetchEgressRuleByName(name string) []*model.EgressRule {
 }
 
 //Init init router config
-func (r *Egress) Init() error {
+func (r *Egress) Init(op egress.Options) error {
+	fmt.Println("call is coming form the egressconfig init ")
 	// the manager use dests to init, so must init after dests
 	if err := initEgressManager(); err != nil {
 		return err

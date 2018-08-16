@@ -14,6 +14,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"fmt"
 )
 
 //Constant for mesher conf file
@@ -55,7 +56,7 @@ func SetEgressConfig(nc *egressmodel.EgressConfig) {
 
 //GetConfigFilePath returns config file path
 func GetConfigFilePath(key string) (string, error) {
-	if cmd.Configs.ConfigFile == "" {
+	if cmd.Configs.ConfigFile == "" || key == EgressConfFile{
 		wd, err := fileutil.GetWorkDir()
 		if err != nil {
 			return "", err
@@ -94,17 +95,18 @@ func Init() error {
 	if err != nil {
 		return err
 	}
-
+    fmt.Println("Raj : file contentes %v %v", egressContents, string(egressContents))
 	if err := yaml.Unmarshal([]byte(egressContents), egressConfig); err != nil {
 		return err
 	}
-
+    fmt.Println("Raj: after unmarshall value of egressconfig %v", egressConfig)
 	return nil
 }
 
 //GetConfigContents returns config contents
 func GetConfigContents(key string) (string, error) {
 	f, err := GetConfigFilePath(key)
+	fmt.Println("Raj: The file path is %s", f)
 	if err != nil {
 		return "", err
 	}
@@ -120,6 +122,7 @@ func GetConfigContents(key string) (string, error) {
 
 //SetKeyValueByFile reads mesher.yaml and gets key and value
 func SetKeyValueByFile(key, f string) string {
+	fmt.Println("Raj: Reading file here of rthe file name %s and key ", f, key)
 	var contents string
 	if _, err := os.Stat(f); err != nil {
 		lager.Logger.Warn(err.Error(), nil)
@@ -131,6 +134,13 @@ func SetKeyValueByFile(key, f string) string {
 		return ""
 	}
 	contents = string(b)
+	fmt.Println("Raj: the value of the content is %s", contents)
+	fmt.Println("Raj: the value of the content in byte format ", b)
 	archaius.AddKeyValue(key, contents)
 	return contents
+}
+
+// GetEgressEndpoints returns the pilot address
+func GetEgressEndpoints() string {
+	return egressConfig.Egress.Address
 }

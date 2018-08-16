@@ -25,6 +25,10 @@ import (
 	"github.com/go-chassis/mesher/config/model"
 	"regexp"
 	"strings"
+	"github.com/ServiceComb/go-chassis/util/iputil"
+	"github.com/ServiceComb/go-chassis/pkg/istio/client"
+	chassisTLS "github.com/ServiceComb/go-chassis/core/tls"
+	"crypto/tls"
 )
 
 const (
@@ -32,6 +36,8 @@ const (
 	dns1123LabelFmt       string = "[a-zA-Z0-9]([-a-z-A-Z0-9]*[a-zA-Z0-9])?"
 	wildcardPrefix        string = "(\\*)?" + dns1123LabelFmt
 	DefaultEgressType            = "cse"
+	// EgressTLS defines tls prefix
+ 	EgressTLS = "egress"
 )
 
 var (
@@ -43,15 +49,21 @@ var (
 func Init() error {
 	// init dests
 	egressConfigFromFile := config.GetEgressConfig()
-	BuildEgress(DefaultEgressType)
+	fmt.Println("Raj: value to the build Egress", GetEgressType(egressConfigFromFile.Egress))
+	fmt.Println("Raj: value to the build Destinations %v", egressConfigFromFile.Destinations)
+	BuildEgress(GetEgressType(egressConfigFromFile.Egress))
 
 	if egressConfigFromFile != nil {
 		if egressConfigFromFile.Destinations != nil {
+			fmt.Println("Raj:default egress", DefaultEgress)
 			DefaultEgress.SetEgressRule(egressConfigFromFile.Destinations)
 		}
 	}
-
-	DefaultEgress.Init()
+	op, err := getSpecifiedOptions()
+	if err != nil {
+		return fmt.Errorf("Router options error: %v", err)
+	}
+	DefaultEgress.Init(op)
 	// storing the egress rules based on host in two maps
 	// one host having wild card and other without wildcard
 	plainHosts, regexHosts = SplitEgressRules()
@@ -117,4 +129,49 @@ func validateDNS1123Labels(host string) error {
 //IsDNS1123Label validate label
 func IsDNS1123Label(value string) bool {
 	return len(value) <= dns1123LabelMaxLength && dns1123LabelRegexp.MatchString(value)
+}
+
+
+// Options defines how to init Egress and its fetcher
+type Options struct {
+	Endpoints []string
+	EnableSSL bool
+	TLSConfig *tls.Config
+	Version   string
+
+	//TODO: need timeout for client
+	// TimeOut time.Duration
+}
+
+// ToPilotOptions translate options to client options
+func (o Options) ToPilotOptions() *client.PilotOptions {
+	return &client.PilotOptions{Endpoints: o.Endpoints}
+}
+
+func getSpecifiedOptions() (opts Options, err error) {
+	hosts, scheme, err := iputil.URIs2Hosts(strings.Split(config.GetEgressEndpoints(), ","))
+	if err != nil {
+		return
+	}
+	opts.Endpoints = hosts
+	// TODO: envoy api v1 or v2
+	// opts.Version = config.GetRouterAPIVersion()
+	opts.TLSConfig, err = chassisTLS.GetTLSConfig(scheme, EgressTLS)
+	if err != nil {
+		return
+	}
+	if opts.TLSConfig != nil {
+		opts.EnableSSL = true
+	}
+	return
+}
+
+
+
+// GetRouterType returns the type of router
+func GetEgressType(egress model.Egress) string {
+	if egress.Infra != "" {
+		return egress.Infra
+	}
+	return DefaultEgressType
 }
